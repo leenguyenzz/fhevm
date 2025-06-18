@@ -1,3 +1,4 @@
+use alloy_provider::Provider;
 use axum::{
     extract::State,
     http::StatusCode,
@@ -11,6 +12,8 @@ use tokio::net::TcpListener;
 use tokio_util::sync::CancellationToken;
 use tracing::{error, info};
 
+use crate::types::BlockchainProvider;
+
 #[derive(Serialize)]
 struct HealthResponse {
     status_code: String,
@@ -22,10 +25,27 @@ struct HealthResponse {
 impl From<HealthStatus> for HealthResponse {
     fn from(status: HealthStatus) -> Self {
         let details = status.error_details();
+        let is_dependency = |key| {
+            status
+                .is_dependency_check
+                .get(key)
+                .copied()
+                .unwrap_or(false)
+        };
         let dependencies: HashMap<&'static str, &'static str> = status
             .checks
             .iter()
-            .map(|(&key, &value)| (key, if value { "ok" } else { "fail" }))
+            .filter_map(|(&key, &value)| {
+                if is_dependency(key) {
+                    if value {
+                        Some((key, "ok"))
+                    } else {
+                        Some((key, "fail"))
+                    }
+                } else {
+                    None
+                }
+            })
             .collect();
 
         Self {
@@ -137,6 +157,7 @@ impl<S: HealthCheckService + Send + Sync + 'static> HttpServer<S> {
 #[derive(Clone, Default)]
 pub struct HealthStatus {
     checks: HashMap<&'static str, bool>,
+    is_dependency_check: HashMap<&'static str, bool>,
     error_details: Vec<String>,
 }
 
@@ -156,10 +177,19 @@ impl HealthStatus {
             }
         }
         self.checks.insert("database", is_connected);
+        self.is_dependency_check.insert("database", true);
     }
 
-    pub fn set_custom_check(&mut self, check: &'static str, value: bool) {
+    /// Checks if the blockchain is connected by executing a simple query
+    pub async fn set_blockchain_connected(&mut self, provider: &BlockchainProvider) {
+        let is_connected = provider.get_block_number().await.is_ok();
+        self.checks.insert("blockchain", is_connected);
+        self.is_dependency_check.insert("blockchain", true);
+    }
+
+    pub fn set_custom_check(&mut self, check: &'static str, value: bool, is_dependency: bool) {
         self.checks.insert(check, value);
+        self.is_dependency_check.insert(check, is_dependency);
     }
 
     pub fn add_error_details(&mut self, details: String) {
