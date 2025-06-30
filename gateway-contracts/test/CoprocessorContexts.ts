@@ -388,7 +388,7 @@ describe("CoprocessorContexts", function () {
         // Add a new coprocessor context
         const txResult = await coprocessorContexts
           .connect(owner)
-          .addCoprocessorContext(newFeatureSet, newBlockPeriods, newCoprocessors);
+          .addCoprocessorContext(newFeatureSet, newCoprocessors, newBlockPeriods);
 
         const oldCoprocessorContext: CoprocessorContextStruct = {
           contextId,
@@ -423,7 +423,7 @@ describe("CoprocessorContexts", function () {
         await addNewCoprocessorContext(3, coprocessorContexts, owner);
 
         await expect(
-          coprocessorContexts.connect(owner).addCoprocessorContext(newFeatureSet, newBlockPeriods, newCoprocessors),
+          coprocessorContexts.connect(owner).addCoprocessorContext(newFeatureSet, newCoprocessors, newBlockPeriods),
         )
           .to.be.revertedWithCustomError(coprocessorContexts, "PreActivationContextOngoing")
           .withArgs(newContextId);
@@ -440,7 +440,7 @@ describe("CoprocessorContexts", function () {
         );
 
         await expect(
-          coprocessorContexts.connect(owner).addCoprocessorContext(newFeatureSet, newBlockPeriods, newCoprocessors),
+          coprocessorContexts.connect(owner).addCoprocessorContext(newFeatureSet, newCoprocessors, newBlockPeriods),
         )
           .to.be.revertedWithCustomError(coprocessorContexts, "SuspendedContextOngoing")
           .withArgs(contextId);

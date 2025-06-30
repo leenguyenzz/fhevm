@@ -41,7 +41,7 @@ interface ICoprocessorContexts {
     event PreActivateCoprocessorContext(CoprocessorContext newCoprocessorContext, uint256 activationBlockNumber);
     event SuspendCoprocessorContext(uint256 contextId, uint256 deactivatedBlockNumber);
 
-    function addCoprocessorContext(uint256 featureSet, CoprocessorContextBlockPeriods memory blockPeriods, Coprocessor[] memory coprocessors) external;
+    function addCoprocessorContext(uint256 featureSet, Coprocessor[] memory coprocessors, CoprocessorContextBlockPeriods memory blockPeriods) external;
     function checkIsCoprocessorSignerFromContext(uint256 contextId, address signerAddress) external view;
     function checkIsCoprocessorTxSenderFromContext(uint256 contextId, address txSenderAddress) external view;
     function compromiseCoprocessorContext(uint256 contextId) external;
@@ -78,23 +78,6 @@ interface ICoprocessorContexts {
         "internalType": "uint256"
       },
       {
-        "name": "blockPeriods",
-        "type": "tuple",
-        "internalType": "struct CoprocessorContextBlockPeriods",
-        "components": [
-          {
-            "name": "preActivationBlockPeriod",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "suspendedBlockPeriod",
-            "type": "uint256",
-            "internalType": "uint256"
-          }
-        ]
-      },
-      {
         "name": "coprocessors",
         "type": "tuple[]",
         "internalType": "struct Coprocessor[]",
@@ -118,6 +101,23 @@ interface ICoprocessorContexts {
             "name": "s3BucketUrl",
             "type": "string",
             "internalType": "string"
+          }
+        ]
+      },
+      {
+        "name": "blockPeriods",
+        "type": "tuple",
+        "internalType": "struct CoprocessorContextBlockPeriods",
+        "components": [
+          {
+            "name": "preActivationBlockPeriod",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "suspendedBlockPeriod",
+            "type": "uint256",
+            "internalType": "uint256"
           }
         ]
       }
@@ -3580,9 +3580,9 @@ event SuspendCoprocessorContext(uint256 contextId, uint256 deactivatedBlockNumbe
     };
     #[derive(serde::Serialize, serde::Deserialize)]
     #[derive(Default, Debug, PartialEq, Eq, Hash)]
-    /**Function with signature `addCoprocessorContext(uint256,(uint256,uint256),(string,address,address,string)[])` and selector `0xdea95998`.
+    /**Function with signature `addCoprocessorContext(uint256,(string,address,address,string)[],(uint256,uint256))` and selector `0x84cae187`.
 ```solidity
-function addCoprocessorContext(uint256 featureSet, CoprocessorContextBlockPeriods memory blockPeriods, Coprocessor[] memory coprocessors) external;
+function addCoprocessorContext(uint256 featureSet, Coprocessor[] memory coprocessors, CoprocessorContextBlockPeriods memory blockPeriods) external;
 ```*/
     #[allow(non_camel_case_types, non_snake_case, clippy::pub_underscore_fields)]
     #[derive(Clone)]
@@ -3590,13 +3590,13 @@ function addCoprocessorContext(uint256 featureSet, CoprocessorContextBlockPeriod
         #[allow(missing_docs)]
         pub featureSet: alloy::sol_types::private::primitives::aliases::U256,
         #[allow(missing_docs)]
-        pub blockPeriods: <CoprocessorContextBlockPeriods as alloy::sol_types::SolType>::RustType,
-        #[allow(missing_docs)]
         pub coprocessors: alloy::sol_types::private::Vec<
             <Coprocessor as alloy::sol_types::SolType>::RustType,
         >,
+        #[allow(missing_docs)]
+        pub blockPeriods: <CoprocessorContextBlockPeriods as alloy::sol_types::SolType>::RustType,
     }
-    ///Container type for the return parameters of the [`addCoprocessorContext(uint256,(uint256,uint256),(string,address,address,string)[])`](addCoprocessorContextCall) function.
+    ///Container type for the return parameters of the [`addCoprocessorContext(uint256,(string,address,address,string)[],(uint256,uint256))`](addCoprocessorContextCall) function.
     #[allow(non_camel_case_types, non_snake_case, clippy::pub_underscore_fields)]
     #[derive(Clone)]
     pub struct addCoprocessorContextReturn {}
@@ -3612,16 +3612,16 @@ function addCoprocessorContext(uint256 featureSet, CoprocessorContextBlockPeriod
             #[doc(hidden)]
             type UnderlyingSolTuple<'a> = (
                 alloy::sol_types::sol_data::Uint<256>,
-                CoprocessorContextBlockPeriods,
                 alloy::sol_types::sol_data::Array<Coprocessor>,
+                CoprocessorContextBlockPeriods,
             );
             #[doc(hidden)]
             type UnderlyingRustTuple<'a> = (
                 alloy::sol_types::private::primitives::aliases::U256,
-                <CoprocessorContextBlockPeriods as alloy::sol_types::SolType>::RustType,
                 alloy::sol_types::private::Vec<
                     <Coprocessor as alloy::sol_types::SolType>::RustType,
                 >,
+                <CoprocessorContextBlockPeriods as alloy::sol_types::SolType>::RustType,
             );
             #[cfg(test)]
             #[allow(dead_code, unreachable_patterns)]
@@ -3639,7 +3639,7 @@ function addCoprocessorContext(uint256 featureSet, CoprocessorContextBlockPeriod
             impl ::core::convert::From<addCoprocessorContextCall>
             for UnderlyingRustTuple<'_> {
                 fn from(value: addCoprocessorContextCall) -> Self {
-                    (value.featureSet, value.blockPeriods, value.coprocessors)
+                    (value.featureSet, value.coprocessors, value.blockPeriods)
                 }
             }
             #[automatically_derived]
@@ -3649,8 +3649,8 @@ function addCoprocessorContext(uint256 featureSet, CoprocessorContextBlockPeriod
                 fn from(tuple: UnderlyingRustTuple<'_>) -> Self {
                     Self {
                         featureSet: tuple.0,
-                        blockPeriods: tuple.1,
-                        coprocessors: tuple.2,
+                        coprocessors: tuple.1,
+                        blockPeriods: tuple.2,
                     }
                 }
             }
@@ -3692,8 +3692,8 @@ function addCoprocessorContext(uint256 featureSet, CoprocessorContextBlockPeriod
         impl alloy_sol_types::SolCall for addCoprocessorContextCall {
             type Parameters<'a> = (
                 alloy::sol_types::sol_data::Uint<256>,
-                CoprocessorContextBlockPeriods,
                 alloy::sol_types::sol_data::Array<Coprocessor>,
+                CoprocessorContextBlockPeriods,
             );
             type Token<'a> = <Self::Parameters<
                 'a,
@@ -3703,8 +3703,8 @@ function addCoprocessorContext(uint256 featureSet, CoprocessorContextBlockPeriod
             type ReturnToken<'a> = <Self::ReturnTuple<
                 'a,
             > as alloy_sol_types::SolType>::Token<'a>;
-            const SIGNATURE: &'static str = "addCoprocessorContext(uint256,(uint256,uint256),(string,address,address,string)[])";
-            const SELECTOR: [u8; 4] = [222u8, 169u8, 89u8, 152u8];
+            const SIGNATURE: &'static str = "addCoprocessorContext(uint256,(string,address,address,string)[],(uint256,uint256))";
+            const SELECTOR: [u8; 4] = [132u8, 202u8, 225u8, 135u8];
             #[inline]
             fn new<'a>(
                 tuple: <Self::Parameters<'a> as alloy_sol_types::SolType>::RustType,
@@ -3717,12 +3717,12 @@ function addCoprocessorContext(uint256 featureSet, CoprocessorContextBlockPeriod
                     <alloy::sol_types::sol_data::Uint<
                         256,
                     > as alloy_sol_types::SolType>::tokenize(&self.featureSet),
-                    <CoprocessorContextBlockPeriods as alloy_sol_types::SolType>::tokenize(
-                        &self.blockPeriods,
-                    ),
                     <alloy::sol_types::sol_data::Array<
                         Coprocessor,
                     > as alloy_sol_types::SolType>::tokenize(&self.coprocessors),
+                    <CoprocessorContextBlockPeriods as alloy_sol_types::SolType>::tokenize(
+                        &self.blockPeriods,
+                    ),
                 )
             }
             #[inline]
@@ -6497,6 +6497,7 @@ function refreshCoprocessorContextStatuses() external;
             [96u8, 178u8, 84u8, 101u8],
             [107u8, 168u8, 24u8, 225u8],
             [113u8, 95u8, 8u8, 60u8],
+            [132u8, 202u8, 225u8, 135u8],
             [136u8, 139u8, 153u8, 224u8],
             [145u8, 100u8, 208u8, 174u8],
             [149u8, 123u8, 42u8, 190u8],
@@ -6505,7 +6506,6 @@ function refreshCoprocessorContextStatuses() external;
             [190u8, 145u8, 24u8, 123u8],
             [209u8, 132u8, 29u8, 211u8],
             [215u8, 64u8, 228u8, 2u8],
-            [222u8, 169u8, 89u8, 152u8],
             [222u8, 191u8, 230u8, 92u8],
             [238u8, 193u8, 104u8, 251u8],
             [239u8, 105u8, 151u8, 249u8],
@@ -6707,6 +6707,19 @@ function refreshCoprocessorContextStatuses() external;
                     getCoprocessorContextDeactivatedBlockNumber
                 },
                 {
+                    fn addCoprocessorContext(
+                        data: &[u8],
+                        validate: bool,
+                    ) -> alloy_sol_types::Result<ICoprocessorContextsCalls> {
+                        <addCoprocessorContextCall as alloy_sol_types::SolCall>::abi_decode_raw(
+                                data,
+                                validate,
+                            )
+                            .map(ICoprocessorContextsCalls::addCoprocessorContext)
+                    }
+                    addCoprocessorContext
+                },
+                {
                     fn getCoprocessorContextStatus(
                         data: &[u8],
                         validate: bool,
@@ -6817,19 +6830,6 @@ function refreshCoprocessorContextStatuses() external;
                             .map(ICoprocessorContextsCalls::destroyCoprocessorContext)
                     }
                     destroyCoprocessorContext
-                },
-                {
-                    fn addCoprocessorContext(
-                        data: &[u8],
-                        validate: bool,
-                    ) -> alloy_sol_types::Result<ICoprocessorContextsCalls> {
-                        <addCoprocessorContextCall as alloy_sol_types::SolCall>::abi_decode_raw(
-                                data,
-                                validate,
-                            )
-                            .map(ICoprocessorContextsCalls::addCoprocessorContext)
-                    }
-                    addCoprocessorContext
                 },
                 {
                     fn getCoprocessorContextActivationBlockNumber(
@@ -7939,16 +7939,16 @@ the bytecode concatenated with the constructor's ABI-encoded arguments.*/
         pub fn addCoprocessorContext(
             &self,
             featureSet: alloy::sol_types::private::primitives::aliases::U256,
-            blockPeriods: <CoprocessorContextBlockPeriods as alloy::sol_types::SolType>::RustType,
             coprocessors: alloy::sol_types::private::Vec<
                 <Coprocessor as alloy::sol_types::SolType>::RustType,
             >,
+            blockPeriods: <CoprocessorContextBlockPeriods as alloy::sol_types::SolType>::RustType,
         ) -> alloy_contract::SolCallBuilder<T, &P, addCoprocessorContextCall, N> {
             self.call_builder(
                 &addCoprocessorContextCall {
                     featureSet,
-                    blockPeriods,
                     coprocessors,
+                    blockPeriods,
                 },
             )
         }

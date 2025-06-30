@@ -147,9 +147,11 @@ describe("Mock contracts", function () {
   describe("CoprocessorContextsMock", async function () {
     it("Should emit PreActivateCoprocessorContext event on add coprocessor context call", async function () {
       await expect(
-        coprocessorContextsMock.addCoprocessorContext(DefaultUint256, DefaultCoprocessorContextBlockPeriods, [
-          DefaultCoprocessor,
-        ]),
+        coprocessorContextsMock.addCoprocessorContext(
+          DefaultUint256,
+          [DefaultCoprocessor],
+          DefaultCoprocessorContextBlockPeriods,
+        ),
       )
         .to.emit(coprocessorContextsMock, "PreActivateCoprocessorContext")
         .withArgs(toValues(DefaultCoprocessorContext), DefaultUint256);

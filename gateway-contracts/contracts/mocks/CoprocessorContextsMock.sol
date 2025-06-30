@@ -35,8 +35,8 @@ contract CoprocessorContextsMock {
 
     function addCoprocessorContext(
         uint256 featureSet,
-        CoprocessorContextBlockPeriods calldata blockPeriods,
-        Coprocessor[] calldata coprocessors
+        Coprocessor[] calldata coprocessors,
+        CoprocessorContextBlockPeriods calldata blockPeriods
     ) external {
         CoprocessorContext memory activeCoprocessorContext;
         CoprocessorContext memory newCoprocessorContext;

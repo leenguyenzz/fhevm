@@ -180,8 +180,8 @@ contract CoprocessorContexts is ICoprocessorContexts, Ownable2StepUpgradeable, U
      */
     function addCoprocessorContext(
         uint256 featureSet,
-        CoprocessorContextBlockPeriods calldata blockPeriods,
-        Coprocessor[] calldata coprocessors
+        Coprocessor[] calldata coprocessors,
+        CoprocessorContextBlockPeriods calldata blockPeriods
     ) external virtual onlyOwner {
         CoprocessorContextsStorage storage $ = _getCoprocessorContextsStorage();
         // This will revert if there is no active coprocessor context. Although this should never

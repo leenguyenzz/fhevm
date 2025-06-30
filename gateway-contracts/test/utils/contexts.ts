@@ -82,7 +82,7 @@ export async function addNewCoprocessorContext(
   }
 
   // Add a new coprocessor context
-  await coprocessorContexts.connect(owner).addCoprocessorContext(featureSet, blockPeriods, result.coprocessors);
+  await coprocessorContexts.connect(owner).addCoprocessorContext(featureSet, result.coprocessors, blockPeriods);
 
   return {
     ...result,

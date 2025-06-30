@@ -190,13 +190,13 @@ interface ICoprocessorContexts {
     /**
      * @notice Add a new coprocessor context.
      * @param featureSet The feature set.
-     * @param blockPeriods The block periods.
      * @param coprocessors The set of coprocessors representing the coprocessor context.
+     * @param blockPeriods The block periods.
      */
     function addCoprocessorContext(
         uint256 featureSet,
-        CoprocessorContextBlockPeriods calldata blockPeriods,
-        Coprocessor[] calldata coprocessors
+        Coprocessor[] calldata coprocessors,
+        CoprocessorContextBlockPeriods calldata blockPeriods
     ) external;
 
     /**
