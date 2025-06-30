@@ -233,35 +233,33 @@ contract CoprocessorContexts is ICoprocessorContexts, Ownable2StepUpgradeable, U
     function refreshCoprocessorContextStatuses() external virtual whenNotPaused {
         CoprocessorContextsStorage storage $ = _getCoprocessorContextsStorage();
 
-        // If there is a pre-activation coprocessor context, then check if it is time to activate it
+        // Check if there is a pre-activation coprocessor context and if it is time to activate it
         // and thus suspend the current active coprocessor context
         uint256 preActivationContextId = $.coprocessorContextLifecycle.preActivationContextId;
-        if (preActivationContextId != 0) {
-            if (block.number >= $.coprocessorContextActivationBlockNumber[preActivationContextId]) {
-                uint256 activeContextId = getActiveCoprocessorContextId();
+        if (
+            preActivationContextId != 0 &&
+            block.number >= $.coprocessorContextActivationBlockNumber[preActivationContextId]
+        ) {
+            uint256 activeContextId = getActiveCoprocessorContextId();
 
-                // Define the deactivation block number for the current active coprocessor context
-                uint256 deactivatedBlockNumber = block.number +
-                    $.coprocessorContextSuspendedBlockPeriod[activeContextId];
-                $.coprocessorContextDeactivatedBlockNumber[activeContextId] = deactivatedBlockNumber;
+            // Define the deactivation block number for the current active coprocessor context
+            uint256 deactivatedBlockNumber = block.number + $.coprocessorContextSuspendedBlockPeriod[activeContextId];
+            $.coprocessorContextDeactivatedBlockNumber[activeContextId] = deactivatedBlockNumber;
 
-                // Set the current active coprocessor context to the suspended state
-                ContextLifecycle.setSuspended($.coprocessorContextLifecycle, activeContextId);
-                emit SuspendCoprocessorContext(activeContextId, deactivatedBlockNumber);
+            // Set the current active coprocessor context to the suspended state
+            ContextLifecycle.setSuspended($.coprocessorContextLifecycle, activeContextId);
+            emit SuspendCoprocessorContext(activeContextId, deactivatedBlockNumber);
 
-                // Set the new active coprocessor context
-                ContextLifecycle.setActive($.coprocessorContextLifecycle, preActivationContextId);
-                emit ActivateCoprocessorContext(preActivationContextId);
-            }
+            // Set the new active coprocessor context
+            ContextLifecycle.setActive($.coprocessorContextLifecycle, preActivationContextId);
+            emit ActivateCoprocessorContext(preActivationContextId);
         }
 
-        // If there is a suspended coprocessor context, then check if it is time to deactivate it
+        // Check if there is a suspended coprocessor context and if it is time to deactivate it
         uint256 suspendedContextId = _getSuspendedCoprocessorContextId();
-        if (suspendedContextId != 0) {
-            if (block.number >= $.coprocessorContextDeactivatedBlockNumber[suspendedContextId]) {
-                ContextLifecycle.setDeactivated($.coprocessorContextLifecycle, suspendedContextId);
-                emit DeactivateCoprocessorContext(suspendedContextId);
-            }
+        if (suspendedContextId != 0 && block.number >= $.coprocessorContextDeactivatedBlockNumber[suspendedContextId]) {
+            ContextLifecycle.setDeactivated($.coprocessorContextLifecycle, suspendedContextId);
+            emit DeactivateCoprocessorContext(suspendedContextId);
         }
     }
 

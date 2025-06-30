@@ -13,8 +13,8 @@ import "./shared/UUPSUpgradeableEmptyProxy.sol";
 import "./shared/GatewayConfigChecks.sol";
 import "./shared/Pausable.sol";
 import "./libraries/HandleOps.sol";
-import { CoprocessorContexts } from "./CoprocessorContexts.sol";
 import { ContextChecks } from "./shared/ContextChecks.sol";
+
 /**
  * @title CiphertextCommits smart contract
  * @dev See {ICiphertextCommits}.
