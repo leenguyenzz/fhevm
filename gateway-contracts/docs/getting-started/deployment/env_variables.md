@@ -151,9 +151,7 @@ HOST_CHAIN_WEBSITE_0="https://host-chain-2025.com" # (string)
 
 ### CoprocessorContexts values
 
-These values are crucial for the fhevm Gateway protocol and are set in the `CoprocessorContexts` contract at deployment.
-To understand what each value is used for, please refer to the
-[CoprocessorContexts](../contracts/coprocessor_contexts.md) documentation.
+These values are crucial for the fhevm Gateway protocol and are set in the `CoprocessorContexts` contract at deployment. To understand what each value is used for, please refer to the [CoprocessorContexts](../contracts/coprocessor_contexts.md) documentation.
 
 #### At deployment
 
@@ -173,10 +171,7 @@ This integer is used to identify the feature set of the coprocessors for softwar
 NUM_COPROCESSORS="3" # (number)
 ```
 
-`NUM_COPROCESSORS` is the number of coprocessors to register in the `CoprocessorContexts` contract. It it not stored in
-it and is only used within the deployment script. The following metadata variables must be set for each coprocessor,
-indexed by a coprocessor number starting from 0. If not enough variables are set, the deployment will fail. If, on the
-contrary, too many variables are set, the deployment will succeed but the extra ones will be ignored.
+`NUM_COPROCESSORS` is the number of coprocessors to register in the `CoprocessorContexts` contract. It it not stored in it and is only used within the deployment script. The following metadata variables must be set for each coprocessor, indexed by a coprocessor number starting from 0. If not enough variables are set, the deployment will fail. If, on the contrary, too many variables are set, the deployment will succeed but the extra ones will be ignored.
 
 ```bash
 COPROCESSOR_NAME_0="Coprocessor 1" # (string)
